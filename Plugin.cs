@@ -35,9 +35,9 @@ namespace PlayerKillerToken
             _serverConfigLocked = config("General", "Force Server Config", true, "Force Server Config");
             _ = ConfigSync.AddLockingConfigEntry(_serverConfigLocked);
 
-            Item ironFangAxe = new("player_killer_token", "Player_Killer_Token");
-            ironFangAxe.Name.English("Player Killer Token"); // You can use this to fix the display name in code
-            ironFangAxe.Description.English("A commemerative token of your Viking valor.");
+            Item PKToken = new("player_killer_token", "Player_Killer_Token");
+            PKToken.Name.English("Player Killer Token"); // You can use this to fix the display name in code
+            PKToken.Description.English("A commemerative token of your Viking valor.");
 
             Assembly assembly = Assembly.GetExecutingAssembly();
             _harmony.PatchAll(assembly);
