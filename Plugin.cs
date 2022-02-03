@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
 using BepInEx;
 using BepInEx.Configuration;
@@ -109,5 +110,35 @@ namespace PlayerKillerToken
         }
 
         #endregion
+
+        [HarmonyPatch(typeof(Player), nameof(Player.Awake))]
+        private class AddRPCToPlayer
+        {
+            private static void Postfix(Player __instance)
+            {
+                __instance.m_nview.Register("PlayerKillerToken GrantToken", _ =>
+                {
+                    __instance.m_inventory.AddItem(ObjectDB.instance.GetItemPrefab("Player_Killer_Token").GetComponent<ItemDrop>().m_itemData);
+                });
+            }
+        }
+
+        [HarmonyPatch(typeof(Player), nameof(Player.OnDeath))]
+        private class RPCOnPlayerDeath
+        {
+            private static void Postfix(Player __instance)
+            {
+                List<Player> nearbyPlayers = new();
+                Player.GetPlayersInRange(__instance.transform.position, 50f, nearbyPlayers);
+
+                foreach (Player p in nearbyPlayers)
+                {
+                    if (p != __instance)
+                    {
+                        p.m_nview.InvokeRPC("PlayerKillerToken GrantToken");
+                    }
+                }
+            }
+        }
     }
 }
